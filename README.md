@@ -1,4 +1,4 @@
-# Gold_AlgoTrading
+# Gold AlgoTrading
 ---
 ## Briefly Description
 
