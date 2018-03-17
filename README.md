@@ -1,6 +1,6 @@
 # Gold_AlgoTrading
 ---
-##Briefly Description
+## Briefly Description
 
 This project aims to develop an effective algorithmic trading system for gold investment,which mainly consists of parts:
 - Market pre-analyst: To figure out market views and terms which reflect market situation.
