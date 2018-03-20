@@ -6,7 +6,7 @@ class Optimizer(object):
     def get_name(self):
         return self._name
 
-    def add_strategy_orders(self, timestamp, orders):
+    def push_strategy_orders(self, timestamp, orders):
         raise NotImplementedError
 
     def get_child_orders(self, timestamp):

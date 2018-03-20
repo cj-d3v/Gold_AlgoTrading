@@ -54,12 +54,12 @@ class Project(object):
         sorders = strategy.generate_orders(timestamp)
         #logger.log_strategy_orders(sorders)
         if len(sorders) > 0:
-            optimizer.add_strategy_orders(timestamp, sorders)
+            optimizer.push_strategy_orders(timestamp, sorders)
 
-        corders = optimizer.get_child_orders(timestamp)
+        corders = optimizer.pop_child_orders(timestamp)
         #logger.log_child_orders(corders)
         if len(corders) > 0:
             dma.execute_child_orders(timestamp, corders)
 
-        forders = dma.get_filled_order(timestamp)
+        forders = dma.pop_filled_order(timestamp)
         #logger.log_filled_orders(forders)
