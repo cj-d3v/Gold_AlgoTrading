@@ -1,27 +1,41 @@
+import time
+import numpy as np
+
 # global constant
-ACTION_BUY = 'B'
-ACTION_SELL = 'S'
-MARKET_ORDER = 'M'
-LIMIT_ORDER = 'L'
+ACTION_BUY = 11
+ACTION_SELL = 12
+ORDER_TYPE_MARKET = 21
+ORDER_TYPE_LIMIT = 22
+
+def next_soid():
+    return str(int(time.time())) + str(np.random.randint(100)).zfill(2)
 
 class StrategyOrder(object):
+    """
+    Value object for strategy orders. Strategy orders are the high level
+    trading order generated from the process for strategy formation.
 
-    def __init__(self, soid, portfolio, timestamp, symbol, action, qty, endtime, limitprice):
+    soid: the unique identifier of a strategy order within a project
+    ref_soid: the reference soid, for example the order that close a previous
+              position would reference to the original entry order.
+    timestamp: the time which this order is created.
+    symbol: the instrument that we trade.
+    action: buy or sell, use the global constant.
+    qty: the number of contracts that we trade.
+    endtime: specifies the time window for this order.
+    """
 
+    def __init__(self, soid, ref_soid, timestamp, symbol, action, qty, endtime):
         self._soid = soid
-        self._portfolio = portfolio
+        self._ref_soid = ref_soid
         self._timestamp = timestamp
         self._symbol = symbol
         self._action = action
         self._qty = qty
         self._endtime = endtime
-        self._limitprice = limitprice
 
     def get_soid(self):
         return self._soid
-
-    def get_portfolio(self):
-        return self._portfolio
 
     def get_timestamp(self):
         return self._timestamp
@@ -38,15 +52,30 @@ class StrategyOrder(object):
     def get_endtime(self):
         return self._endtime
 
-    def get_limitprice(self):
-        return self._limitprice
 
 
 class ChildOrder(object):
+    """
+    Value object for children orders. Child orders are those orders derived
+    from strategy orders. In the trade execution process, order optimizers
+    would slice the original strategy order into pieces into order to minimize
+    market  impact. The child order would also be more substantial by
+    specifying the type of order (market or limit order) to be executed in
+    direct market access.
 
-    def __init__(self, coid, strategy_order, timestamp, symbol, action, qty, ordertype, limitprice):
+    soid: reference to the strategy order that this child order belongs to.
+    coid: the sequence number of children orders under a strategy order.
+    timestamp: the time which this child order is submitted to execute.
+    symbol: the instrument that we trade.
+    action: buy or sell, use the global constant.
+    qty: the number of contracts that we trade.
+    ordertype: limit order or markey order, use the global constant.
+    limitprice: the limit price for limit order.
+    """
+
+    def __init__(self, soid, coid, timestamp, symbol, action, qty, ordertype, limitprice):
+        self._soid = soid
         self._coid = coid
-        self._strategy_order = strategy_order
         self._timestamp = timestamp
         self._symbol = symbol
         self._action = action
@@ -54,11 +83,11 @@ class ChildOrder(object):
         self._ordertype = ordertype
         self._limitprice = limitprice
 
+    def get_soid(self):
+        return self._soid
+
     def get_coid(self):
         return self._coid
-
-    def get_strategy_order(self):
-        return self._strategy_order
 
     def get_timestamp(self):
         return self._timestamp
@@ -80,10 +109,28 @@ class ChildOrder(object):
 
 
 class FilledOrder(object):
+    """
+    Value object for order fulfillment. Order fulfillment is the information
+    passed from the live or paper-traded direct market access module. For a
+    child order submitted to DMA, it may be executed partially at different
+    times. That's why the executed quantity and price can be different from
+    the child order that an order fulfillment referred to.
 
-    def __init__(self, foid, child_order, timestamp, symbol, action, qty, price, market_impact):
+    soid: reference to the strategy order that this child order belongs to.
+    coid: reference to the child order that this order fulfillment belongs to.
+    foid: the sequence number of this order fulfillment under a child order.
+    timestamp: the time which the partial child order is executed.
+    symbol: the instrument that we trade.
+    action: buy or sell, use the global constant.
+    qty: the partial number of contracts that is executed.
+    price: the price that the partial child order is executed.
+    market_impact: the estimated market impact that is associated with this
+                   execution.
+    """
+    def __init__(self, soid, coid, foid, timestamp, symbol, action, qty, price, market_impact):
+        self._soid = soid
+        self._coid = coid
         self._foid = foid
-        self._child_order = child_order
         self._timestamp = timestamp
         self._symbol = symbol
         self._action = action
@@ -91,11 +138,14 @@ class FilledOrder(object):
         self._price = price
         self._market_impact = market_impact
 
+    def get_soid(self):
+        return self._soid
+
+    def get_coid(self):
+        return self._coid
+
     def get_foid(self):
         return self._foid
-
-    def get_child_order(self):
-        return self._child_order
 
     def get_timestamp(self):
         return self._timestamp
