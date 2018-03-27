@@ -7,6 +7,9 @@ class TWAP(Optimizer):
     def __init__(self):
         super().__init__()
 
-    def get_child_orders(self, timestamp):
+    def execute_strategy_orders(self, config, timestamp, orders):
+        pass
+
+    def pop_child_orders(self, timestamp):
         return []
 

@@ -6,8 +6,7 @@ class PFA_Strategy(Strategy):
     
     def __init__(self):
         super().__init__()
-        # init your own state
+        # init your own states
 
-    def generate_orders(self, timestamp):
-        self.current_timestamp = timestamp
+    def generate_orders(self, config, timestamp):
         return []
