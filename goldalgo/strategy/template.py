@@ -1,6 +1,5 @@
 import numpy as np
 import datetime as dt
-
 class Strategy(object):
     """
     Representation of a trading strategy in the trading system. A strategy will
