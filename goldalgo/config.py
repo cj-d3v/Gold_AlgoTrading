@@ -1,9 +1,9 @@
-from goldalgo.strategy.porfolio_a import *
-from goldalgo.strategy.porfolio_b import *
-from goldalgo.execution.twap import *
-from goldalgo.execution.vwap import *
-from goldalgo.execution.paper_dma import *
-from goldalgo.common.file_trade_logger import *
+from strategy.porfolio_a import *
+from strategy.porfolio_b import *
+from execution.twap import *
+from execution.vwap import *
+from execution.paper_dma import *
+from common.file_trade_logger import *
 
 STRATEGY_PORT_A = 11
 STRATEGY_PORT_B = 12
@@ -19,6 +19,8 @@ TRADE_LOGGER_FILE = 51
 class Config(object):
 
     def __init__(self):
+        self._start_date = None
+        self._end_date = None
         self._strategy_type = None
         self._optimizer_type = None
         self._dma_type = None
@@ -30,6 +32,12 @@ class Config(object):
         self._dma = None
         self._data_provider = None
         self._logger = None
+
+    def get_start_date(self):
+        return self._start_date
+
+    def get_end_date(self):
+        return self._end_date
 
     def set_strategy(self, type):
         if self._strategy is not None:
