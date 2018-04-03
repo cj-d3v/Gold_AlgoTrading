@@ -1,12 +1,31 @@
+import datetime
 from goldalgo.config import *
+
+MINUTES = 11
+HOURS = 12
+DAYS = 13
 
 class Project(object):
 
-    def __init__(self, start_date, end_date, heartbeat, config):
+    _date_format = '%Y-%m-%d'
+
+    def __init__(self, start_date, end_date, heartbeat, unit, config):
         self.config = config
-        self.start_date = start_date
-        self.end_date = end_date
-        self.heartbeat = heartbeat
+
+        self.start_date = datetime.datetime.strptime(start_date, self._date_format)
+        self.end_date = datetime.datetime.strptime(end_date, self._date_format)
+        if (self.start_date > self.end_date):
+            raise ValueError()
+
+        if (unit == MINUTES):
+            self.heartbeat = datetime.timedelta(minutes=heartbeat)
+        elif (unit == HOURS):
+            self.heartbeat= datetime.timedelta(hours=heartbeat)
+        elif (unit == DAYS):
+            self.heartbeat = datetime.timedelta(days=heartbeat)
+        else:
+            raise ValueError()
+
 
     def run(self):
         strategy = self.config.get_strategy()
@@ -15,22 +34,26 @@ class Project(object):
         logger = self.config.get_logger()
         logger.log_project(self)
 
-        timestamp = 0
+        timestamp = self.start_date
 
-        # for each discrete timestamp
-        sorders = strategy.generate_orders(self.config, timestamp)
-        if len(sorders) > 0:
-            logger.log_strategy_orders(self, sorders)
-            optimizer.execute_strategy_orders(self.config, timestamp, sorders)
+        while (timestamp <= self.end_date):
 
-        corders = optimizer.pop_child_orders(timestamp)
-        if len(corders) > 0:
-            logger.log_child_orders(self, corders)
-            dma.execute_child_orders(self.config, timestamp, corders)
+            print('timestamp=', timestamp)
 
-        forders = dma.pop_filled_order(timestamp)
-        if len(forders) > 0:
-            logger.log_filled_orders(self, forders)
-        #
+            sorders = strategy.generate_orders(self.config, timestamp)
+            if len(sorders) > 0:
+                logger.log_strategy_orders(self, sorders)
+                optimizer.execute_strategy_orders(self.config, timestamp, sorders)
+
+            corders = optimizer.pop_child_orders(timestamp)
+            if len(corders) > 0:
+                logger.log_child_orders(self, corders)
+                dma.execute_child_orders(self.config, timestamp, corders)
+
+            forders = dma.pop_filled_order(timestamp)
+            if len(forders) > 0:
+                logger.log_filled_orders(self, forders)
+
+            timestamp = timestamp + self.heartbeat
 
         print('completed.')
