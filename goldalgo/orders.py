@@ -69,7 +69,7 @@ class ChildOrder(object):
     symbol: the instrument that we trade.
     action: buy or sell, use the global constant.
     qty: the number of contracts that we trade.
-    ordertype: limit order or markey order, use the global constant.
+    ordertype: limit order or market order, use the global constant.
     limitprice: the limit price for limit order.
     """
 
