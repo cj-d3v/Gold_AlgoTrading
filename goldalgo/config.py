@@ -1,9 +1,9 @@
-from strategy.porfolio_a import *
-from strategy.porfolio_b import *
-from execution.twap import *
-from execution.vwap import *
-from execution.paper_dma import *
-from common.file_trade_logger import *
+from goldalgo.strategy.porfolio_a import *
+from goldalgo.strategy.porfolio_b import *
+from goldalgo.execution.twap import *
+from goldalgo.execution.vwap import *
+from goldalgo.execution.paper_dma import *
+from goldalgo.common.file_trade_logger import *
 
 STRATEGY_PORT_A = 11
 STRATEGY_PORT_B = 12

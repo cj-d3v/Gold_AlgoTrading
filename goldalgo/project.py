@@ -1,5 +1,5 @@
 import datetime
-from config import *
+from goldalgo.config import *
 
 MINUTES = 11
 HOURS = 12
