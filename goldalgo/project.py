@@ -1,4 +1,4 @@
-from config import *
+from goldalgo.config import *
 
 class Project(object):
 

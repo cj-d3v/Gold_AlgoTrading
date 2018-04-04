@@ -1,5 +1,5 @@
-from strategy.template import *
-from strategy.vol_imp import *
+from goldalgo.strategy.template import *
+from goldalgo.strategy.vol_imp import *
 
 class PFA_Strategy(Strategy):
     
