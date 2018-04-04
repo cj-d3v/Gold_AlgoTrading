@@ -5,7 +5,7 @@
 
 import numpy as np
 from scipy.stats import norm
-import BS_MODEL_EXT as bsm
+import goldalgo.strategy.bs_model_ext as bsm
 
 def imp_vol(Type,S0,K,t,T,r,q,V,tol=1e-8,sigmadiff=1,iter_num=200):
     sigma=np.sqrt(2*abs((np.log(S0/K)+(r-q)*(T-t))/(T-t)))
