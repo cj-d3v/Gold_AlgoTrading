@@ -1,3 +1,4 @@
+import datetime
 from goldalgo.strategy.porfolio_a import *
 from goldalgo.strategy.porfolio_b import *
 from goldalgo.execution.twap import *
@@ -16,11 +17,15 @@ DATA_PROVIDER_FILE = 41
 TRADE_LOGGER_FILE = 51
 #TRADE_LOGGER_MYSQL = 52
 
+MINUTES = 1
+HOURS = 2
+DAYS = 3
+
 class Config(object):
 
-    def __init__(self):
-        self._start_date = None
-        self._end_date = None
+    _date_format = '%Y-%m-%d'
+
+    def __init__(self, start_date, end_date, heartbeat, unit):
         self._strategy_type = None
         self._optimizer_type = None
         self._dma_type = None
@@ -33,11 +38,28 @@ class Config(object):
         self._data_provider = None
         self._logger = None
 
+        self._start_date = datetime.datetime.strptime(start_date, self._date_format)
+        self._end_date = datetime.datetime.strptime(end_date, self._date_format)
+        if self._start_date > self._end_date:
+            raise ValueError()
+
+        if unit == MINUTES:
+            self._heartbeat = datetime.timedelta(minutes=heartbeat)
+        elif unit == HOURS:
+            self._heartbeat= datetime.timedelta(hours=heartbeat)
+        elif unit == DAYS:
+            self._heartbeat = datetime.timedelta(days=heartbeat)
+        else:
+            raise ValueError()
+
     def get_start_date(self):
         return self._start_date
 
     def get_end_date(self):
         return self._end_date
+
+    def get_heartbeat(self):
+        return self._heartbeat
 
     def set_strategy(self, type):
         if self._strategy is not None:
