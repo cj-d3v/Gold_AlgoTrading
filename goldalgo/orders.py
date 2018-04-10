@@ -23,16 +23,19 @@ class StrategyOrder(object):
     action: buy or sell, use the global constant.
     qty: the number of contracts that we trade.
     endtime: specifies the time window for this order.
+    must_be_filled: True / False, indicates the order must be 100% completed.
     """
 
-    def __init__(self, soid, ref_soid, timestamp, symbol, action, qty, endtime):
+    def __init__(self, soid, timestamp, symbol, action, qty, endtime, must_be_filled=False,
+                 ref_soid=None):
         self._soid = soid
-        self._ref_soid = ref_soid
         self._timestamp = timestamp
         self._symbol = symbol
         self._action = action
         self._qty = qty
         self._endtime = endtime
+        self._must_be_filled = must_be_filled
+        self._ref_soid = ref_soid
 
     def get_soid(self):
         return self._soid
@@ -51,6 +54,12 @@ class StrategyOrder(object):
 
     def get_endtime(self):
         return self._endtime
+
+    def get_must_be_filled(self):
+        return self._must_be_filled
+
+    def get_ref_soid(self):
+        return self._ref_soid
 
 
 
@@ -73,7 +82,8 @@ class ChildOrder(object):
     limitprice: the limit price for limit order.
     """
 
-    def __init__(self, soid, coid, timestamp, symbol, action, qty, ordertype, limitprice):
+    def __init__(self, soid, coid, timestamp, symbol, action, qty, endtime, ordertype,
+                 limitprice=None):
         self._soid = soid
         self._coid = coid
         self._timestamp = timestamp
@@ -82,6 +92,7 @@ class ChildOrder(object):
         self._qty = qty
         self._ordertype = ordertype
         self._limitprice = limitprice
+        self._endtime = endtime
 
     def get_soid(self):
         return self._soid
@@ -106,6 +117,9 @@ class ChildOrder(object):
 
     def get_limitprice(self):
         return self._limitprice
+
+    def get_endtime(self):
+        return self._endtime
 
 
 class FilledOrder(object):

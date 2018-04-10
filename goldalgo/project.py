@@ -19,11 +19,7 @@ class Project(object):
 
             print('timestamp=', timestamp)
 
-            sorders = strategy.generate_orders(self._config, timestamp)
-            if len(sorders) > 0:
-                logger.log_strategy_orders(self, sorders)
-                optimizer.execute_strategy_orders(self._config, timestamp, sorders)
-
+            # execute child orders generated at last timestamp
             corders = optimizer.pop_child_orders(timestamp)
             if len(corders) > 0:
                 logger.log_child_orders(self, corders)
@@ -32,6 +28,14 @@ class Project(object):
             forders = dma.pop_filled_order(timestamp)
             if len(forders) > 0:
                 logger.log_filled_orders(self, forders)
+
+            # try to detect strategy signal at time timestamp
+            sorders = strategy.generate_orders(self._config, timestamp)
+
+            # optimize the execution by splitting orders
+            if len(sorders) > 0:
+                logger.log_strategy_orders(self, sorders)
+                optimizer.execute_strategy_orders(self._config, timestamp, sorders)
 
             timestamp = timestamp + self._config.get_heartbeat()
 
