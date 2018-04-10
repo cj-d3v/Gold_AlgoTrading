@@ -8,23 +8,40 @@ class TWAP(Optimizer):
     _name = 'TWAP'
 
     def __init__(self):
-        self._interval = datetime.timedelta(minutes=15)
+        self._interval = datetime.timedelta(minutes=5)
         self._scheduler = TradeScheduler()
 
     def execute_strategy_orders(self, config, timestamp, orders):
-        """
-        for each order in orders
-            1. calculate no. of child orders (n) from timestamp and order.endtime
-            2. t = timestamp
-            3. for i in range(n)
-                3.1 calculate child order timestamp (t) t = t + self._interval
-                3.2 create chlid order object (c) c.qty = order.qty / n
-                    c = ChildOrder(soid, coid, ..., null)
-                3.3 self._scheduler.push(t, c)
 
-        """
-        pass
+        timedelta = config.get_heartbeat()
+
+        for order in orders:
+
+            soid = order.get_soid()
+            trade_time = timestamp + timedelta
+            symbol = order.get_symbol()
+            action = order.get_action()
+            qty_left = order.get_qty()
+            endtime = order.get_endtime()
+
+            # calculate no. of child orders
+            n = int((endtime - trade_time) / self._interval)
+            qty = int(qty_left / n)
+
+            for i in range(n):
+
+                if i == n-1:
+                    # first child order
+                    qty = qty_left
+
+                child = ChildOrder(soid, i, trade_time, symbol, action, qty, endtime,
+                                   ORDER_TYPE_MARKET)
+
+                self._scheduler.push_order(trade_time, child)
+                qty_left = qty_left - qty
+                trade_time += self._interval
+        return
+
 
     def pop_child_orders(self, timestamp):
-        return []
-
+        return self._scheduler.pop_orders(timestamp)
