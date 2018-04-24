@@ -1,6 +1,8 @@
 CALL = 11
 PUT = 12
-
+import pandas as pd
+import datetime
+import os 
 
 class DataProvider(object):
     """
@@ -27,7 +29,11 @@ class DataProvider(object):
         return: a list of date object representing the settlement date of the contracts or an
                 empty list
         """
-        pass
+
+        #if asssetcode apilt [0] == option then
+        filepath = 'Options' + asset_code + '.csv'
+        cmdf = pd.read_csv(filepath)
+
 
     def list_option_strikes(self, asset_code, maturity, type):
         """
@@ -53,7 +59,7 @@ class DataProvider(object):
         return: the Symbol object, you may further access to detail specification and historical
                 market data from that.
         """
-        pass
+        
 
     def get_future(self, config, asset_code, maturity):
         """
@@ -67,6 +73,9 @@ class DataProvider(object):
         return: the Symbol object, you may further access to detail specification and historical
                 market data from that.
         """
+        filepath = asset_code + '.csv'
+        fudf = pd.read_csv(filepath)
+        
         pass
 
     def get_option(self, config, asset_code, maturity, strike, type):
@@ -83,7 +92,12 @@ class DataProvider(object):
         return: the Symbol object, you may further access to detail specification and historical
                 market data from that.
         """
-        pass
+        filepath = asset_code + '.csv'
+        opdf = pd.read_csv(filepath)
+        if(type == 'c') then  pass
+                elif(type == 'p') then pass
+        
+
 
     def get_risk_free_interest(self, date, maturity):
         """
@@ -94,6 +108,9 @@ class DataProvider(object):
 
         return: the annual risk free interest rate for the term. e.g. 1.2% pa is 0.012
         """
-        pass
-
+        #open risk_free_rate
+        df = pd.read_csv('risk_free_rate.csv')
+        df = df.set_index('MonYear')
+        date = datetime.datetime.strptime(date,"%Y-%m-%d" ).strftime("%d/%m/%Y")
+        return df[date:date]
 
